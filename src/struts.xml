@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+ 
+	 <package name="default" namespace="/" extends="struts-default"> 
+		
+		<!-- 拦截器声明  -->
+	 	<interceptors>
+	    	<interceptor name="time" class="controller.TimeInterceptor"></interceptor>
+	    	<!-- 如果页面需要注入数据给action，需要显式调用默认拦截器，并放入拦截器栈内 ,否则取不到值 -->
+	    	<interceptor-stack name="myDefaultStack">
+	     		<interceptor-ref name="time" />	<!--自定义拦截器  -->
+	     		<interceptor-ref name="defaultStack" />	<!--默认拦截器必须声明 -->
+   			</interceptor-stack>
+		</interceptors>
+		
+		<action name="login" class="controller.LoginAction" method="execute">
+		
+			<!-- 只对当前的action有效 -->
+			<interceptor-ref name="myDefaultStack"></interceptor-ref>
+			
+			<result name="success">/WEB-INF/page/success.jsp</result>
+			<result name="error">/WEB-INF/page/error.jsp</result>
+			<!-- 验证。。提供名为input的视图!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+			<result name="input">/login.jsp</result>
+		</action>
+		
+		<!-- 跳转到增删改查界面的配置 -->
+		<action name="To_*" class="controller.ChangeURLAction" method="execute">
+			<result name="success">/WEB-INF/page/{1}.jsp</result>
+		</action>
+		
+		<!-- 增删改查的action -->
+		<action name="SearchBook" class="controller.SearchBookAction" method="execute">
+			
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="token"></interceptor-ref> <!-- 自带表单重复提交拦截器 -->
+			
+			<result name="success">/WEB-INF/page/showbook.jsp</result>
+			<result name="error">/WEB-INF/page/CRUDerror.jsp</result>
+			
+			<!-- 拦截器截获跳转 -->
+			<result name="invalid.token">/WEB-INF/page/repeatform.jsp</result>  
+			
+			<!-- 验证。。提供名为input的视图!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+			<result name="input">/WEB-INF/page/searchbook.jsp</result>
+		</action>
+		<action name="InsertBook" class="controller.InsertBookAction" method="execute">
+			<result name="success">/WEB-INF/page/success.jsp</result>
+			<result name="error">/WEB-INF/page/CRUDerror.jsp</result>
+			<!-- 验证。。提供名为input的视图!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+			<result name="input">/WEB-INF/page/insertbook.jsp</result>
+		</action>
+		<action name="DeleteBook" class="controller.DeleteBookAction" method="execute">
+			<result name="success">/WEB-INF/page/success.jsp</result>
+			<result name="error">/WEB-INF/page/CRUDerror.jsp</result>
+			<!-- 验证。。提供名为input的视图!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+			<result name="input">/WEB-INF/page/deletebook.jsp</result>
+		</action>
+		
+	</package>
+
+</struts>
